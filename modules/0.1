@@ -1,0 +1,19 @@
+#%Module1.0
+
+proc ModulesHelp { } {
+   puts stderr "\tFragmentAnalyser module:"
+   puts stderr "See https://github.com/cokelaer/FragmentAnalyser"
+   puts stderr "Author: Thomas Cokelaer (thomas.cokelaer@pasteur.fr) "
+   puts stderr "@2016 for the HUB/biomics"
+   puts stderr "Type fragment_analyser --help for details"
+
+}
+
+module-whatis "TODO, ..."
+
+
+# requires pyonbic
+#
+set-alias fragment_analyser "python
+/pasteur/projets/Biomics/packages/pyonbic_venv/0.1/bin/fragment_analyser.py" 
+
