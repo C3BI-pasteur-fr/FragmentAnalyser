@@ -50,22 +50,6 @@ nM: the concentration in nM unit. conc * 1000 / ((Size) * 650 /1000) where 650
 .. image:: diagnostic.png
 
 
-Installation sur BIC (13 jan 2016)
-------------------------------------
-
-#. Connect with your login to BIC and load the following python environment ::
-
-    module load pyonbic/27.16.3
-
-#. The first time you install FragmentAnalyser, type::
-
-    git clone https://github.com/cokelaer/FragmentAnalyser.git
-    cd FragmentAnalyser
-    python setup.py install
-
-You should see an help message. You can now analyse a set of files  (See help above).
-
-
 
 Usage 
 -------
