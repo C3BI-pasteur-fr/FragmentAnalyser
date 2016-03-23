@@ -11,7 +11,8 @@ On central-bio, edit your .profile and add this line::
 
     module use /pasteur/projets/Matrix/modules
 
-When you open a new terminal, type those commands to load fragment_analyser in your environment::
+When you open a new terminal, type those commands to load fragment_analyser 
+in your environment::
 
     module load pyonbic
     module load fragment_analyser
@@ -19,7 +20,8 @@ When you open a new terminal, type those commands to load fragment_analyser in y
 Analyse some files
 ~~~~~~~~~~~~~~~~~~~~
 
-Assuming you want to analyse a set of files starting with '2015' with csv extensions, type::
+Assuming you want to analyse a set of files starting with '2015' with csv 
+extensions, type::
 
     fragment_analyser.py --pattern 2015*csv --create-images --output summary.csv
 

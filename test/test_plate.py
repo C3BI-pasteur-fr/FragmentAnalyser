@@ -1,4 +1,4 @@
-from fragment_analyser import PlatePFGE
+from fragment_analyser.plate import PlatePFGE
 import glob
 import pandas as pd
 
