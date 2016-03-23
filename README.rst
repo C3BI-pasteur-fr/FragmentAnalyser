@@ -21,7 +21,7 @@ Analyse some files
 
 Assuming you want to analyse a set of files starting with '2015' with csv extensions, type::
 
-    fragment_analyser.py --pattern 2015*csv
+    fragment_analyser.py --pattern 2015*csv --create-images --output summary.csv
 
 If you do not want to create images, add ::
 
