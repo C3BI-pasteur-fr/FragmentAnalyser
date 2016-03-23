@@ -1,6 +1,37 @@
 FragmentAnalyser utilities
 ===========================
 
+Usage 
+-------
+
+Load the module
+~~~~~~~~~~~~~~~~
+
+On central-bio, edit your .profile and add this line::
+
+    module use /pasteur/projets/Matrix/modules
+
+When you open a new terminal, type those commands to load fragment_analyser in your environment::
+
+    module load pyonbic
+    module load fragment_analyser
+
+Analyse some files
+~~~~~~~~~~~~~~~~~~~~
+
+Assuming you want to analyse a set of files starting with '2015' with csv extensions, type::
+
+    fragment_analyser.py --pattern 2015*csv
+
+If you do not want to create images, add ::
+
+    --no-images
+
+Results are stored in **results.csv** file.
+
+
+
+
 Input files must be CSV with the 12 samples. The number of files is not
 important but should be 8 (8 lines on a plate ).
 
@@ -50,31 +81,6 @@ nM: the concentration in nM unit. conc * 1000 / ((Size) * 650 /1000) where 650
 .. image:: diagnostic.png
 
 
-
-Usage 
--------
-
-Load the module
-~~~~~~~~~~~~~~~~
-
-When you open a new terminal, type those commands to load fragment_analyser in your environment::
-
-    module use /pasteur/projets/Matrix/modules
-    module load pyonbic
-    module load fragment_analyser
-
-Analyse some files
-~~~~~~~~~~~~~~~~~~~~
-
-Assuming you want to analyse a set of files starting with '2015' with csv extensions, type::
-
-    fragment_analyser.py --pattern 2015*csv
-
-If you do not want to create images, add ::
-
-    --no-images
-
-Results are stored in **results.csv** file.
 
 
 
