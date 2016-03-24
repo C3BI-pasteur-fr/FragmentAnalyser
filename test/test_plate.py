@@ -5,11 +5,14 @@ import pandas as pd
 
 
 def test_plate():
+
+    # unstructured format
     filenames = glob.glob("test_input*.csv")
     plate = PlatePFGE(filenames)
     plate.output_filename = "test_output.csv"
     plate.to_csv()
 
+    # structured format
     df1 = pd.read_csv("./test_plate.csv")
     df2 = pd.read_csv("./test_output.csv")
     assert all(df1 == df2)
