@@ -9,21 +9,31 @@ import matplotlib
 matplotlib.use('Agg')
 import pylab
 
+from .peaktable import PeakTableReader
 
 
 class Line(object):
     """Class dedicated to a Line
 
-    A line has 12 :class:`Well`.
+    A line has 12 :class:`~fragment_analyser.well.Well`.
 
+    Used by :class:`~fragment_analyser.plate.Plate`
     """
-    def __init__(self):
-        self.wells = []
-        self.number = None
-        self.number_wells = 12
+    def __init__(self, filename, sigma=50, nwells=12, control="last"):
 
-    def append(self, well):
-        self.wells.append(well)
+        self.number = None
+        self._nwells = nwells
+
+        ptr = PeakTableReader(filename, sigma=sigma, nwells=self._nwells)
+        if control == "last":
+            self.wells = ptr.wells[0:-1]
+            self.control = ptr.wells[-1]
+        else:
+            raise NotImplementedError
+
+
+    #def append(self, well):
+    #    self.wells.append(well)
 
     def guess_peak(self):
         """guess peak position
@@ -54,9 +64,15 @@ class Line(object):
     def get_ng_per_ul(self):
         return [well.get_ng_per_ul() for well in self.wells]
 
-    def diagnostic(self):
-        """Shows detected peaks for each well and confidence at 1,2,3
-        MAD value
+    def diagnostic(self, ymax=None):
+        """Shows detected peaks for each well and confidence.
+
+
+        We use MAD instead of standard deviation since we may have very heterogenous data
+        If there are several types of experiments, the enveloppe may not have nay meaning.
+        If we have homogenous experiments, then outliers may biased the estimation of the
+        standard deviation significantly. We therefore use a MAD metric (see :meth:`get_mad)`.
+
 
 
         """
@@ -64,29 +80,61 @@ class Line(object):
         names = [well.name for well in self.wells]
 
         pylab.clf()
-        pylab.plot(peaks, 'o-', mfc='red')
-        pylab.axhline(self.guess_peak(), linestyle='--', lw=2, color='k')
+        pylab.plot(peaks, 'o-', mfc='red', label="selected peak")
+        pylab.axhline(self.guess_peak(), linestyle='--', lw=2, color='k', label='median')
         pylab.grid(True)
-        pylab.xlabel('names')
+        pylab.xlabel('Wells\' names')
         pylab.ylabel('Size bp')
-        pylab.xticks(range(0, self.number_wells-1), names)
-        pylab.ylim([0, pylab.ylim()[1]*1.2])
+        pylab.xticks(range(0, self._nwells-1), names)
+        pylab.ylim([0, pylab.ylim()[1]*1.4])
         pylab.xlim([-0.5, 10.5])
 
         peaks = pylab.array(self.get_peaks())
-        sigma = pylab.std([x for x in peaks if x is not None])
-        X = [i for i,x in enumerate(peaks) if x is not None]
-        peaks = np.array([x for x in peaks if x is not None])
 
         # sigma is biased the presence of outliers, so we better off using the MAD
         sigma = self.get_mad()
 
-        pylab.fill_between(X, peaks-sigma*3, peaks+sigma*3, color='red',
-                           alpha=0.5)
-        pylab.fill_between(X, peaks-sigma*2, peaks+sigma*2, color='orange',
-                           alpha=0.5)
-        pylab.fill_between(X, peaks-sigma, peaks+sigma, color='green',
-                           alpha=0.5)
+        def nanadd(X, value):
+            return [x + value if x is not None else x for x in X]
+
+        X = []
+        Y = []
+        for i, peak in enumerate(peaks):
+            if peak is None and len(X) == 0:
+                # nothing to do. This may be the first point (len(X)==0)
+                continue
+            elif peak is None or (i == len(peaks)-1):
+                # we ended a chunk of valid data, let us plot it
+                X.append(i)
+                Y.append(peak)
+
+                if len(X) == 1: # expand the window so that fill_between shows something
+                    Y.append(Y[0])
+                    X = [X[0]-0.5, X[0]+0.5]
+                else:
+                    X.insert(0, X[0]-0.5)
+                    X.append(X[-1] + 0.5)
+                    Y.append(Y[-1])
+                    Y.insert(0, Y[0])
+
+                X = np.array(X)
+                Y = np.array(Y)
+
+                pylab.fill_between(X, nanadd(Y, -sigma * 3), nanadd(Y, sigma * 3),
+                                   color='red', alpha=0.5)
+                pylab.fill_between(X, nanadd(Y, -sigma * 2), nanadd(Y, sigma * 2),
+                               color='orange', alpha=0.5)
+                pylab.fill_between(X, nanadd(Y, -sigma), nanadd(Y, sigma),
+                               color='green', alpha=0.5)
+                X = []
+                Y = []
+            else:
+                # we are sliding inside a contiguous chunk
+                X.append(i)
+                Y.append(peak)
+        print 'done'
+
+        pylab.legend()
 
     def get_mad(self, minimum=25):
         # The crux of the problem is that the standard deviation is based on squared distances, 

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from .tools import nonemedian
-from .peaktable import PeakTableReader
+from .line import Line
 
 import numpy as np
 import pandas as pd
@@ -41,9 +41,9 @@ class Plate(object):
         for filename in self.filenames:
             print(" - " + filename),
             try:
-                ptr = PeakTableReader(filename, sigma=self.sigma)
-                line = ptr.get_line()
-                # THIS LINE IS IMPORTANANT TO WEIGHT DOWN OUTLIERS
+                line = Line(filename, sigma=self.sigma)
+
+                # THIS LINE IS IMPORTAANT TO WEIGHT DOWN OUTLIERS
                 line.set_guess(self.guess)
                 self.lines.append(line)
                 print('...done')
@@ -63,8 +63,7 @@ class PlatePF1(Plate):
 
     Input data must look like:todo
     """
-    def __init__(self, filenames, guess=None,
-            sigma=50,  output_filename='results.csv'):
+    def __init__(self, filenames, guess=None, sigma=50,  output_filename='results.csv'):
         lower_bp = 10
         upper_bp=1e6
         super(PlatePF1, self).__init__(filenames, guess, lower_bp, 

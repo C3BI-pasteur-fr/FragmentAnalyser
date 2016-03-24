@@ -8,7 +8,6 @@ class Well(object):
     """Class dedicated to a well
 
 
-
     """
     def __init__(self, name, wellID, data, sigma=50):
         """.. rubric:: Constructor
@@ -82,10 +81,10 @@ class Well(object):
         except:
             return None
 
-    def plot(self):
+    def plot(self, marker='o', color='red'):
         x = self.df['Size (bp)'].astype(float).values
         y = self.df['RFU'].astype(float).values
-        pylab.plot(x, y, 'o')
+        pylab.plot(x, y, marker=marker, color=color)
 
 
 
