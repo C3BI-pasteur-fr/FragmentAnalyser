@@ -20,7 +20,7 @@ except:
 
 # TODO a get data file ?
 
-def fa_data(filename, where=None):
+def fa_data(filename):
     """Retrieve data set pathname from fragment_analyser/share directory
 
     ::
@@ -34,10 +34,7 @@ def fa_data(filename, where=None):
     share = easydev.get_shared_directory_path('fragment_analyser')
     share = os.sep.join([share, 'data'])
     # in the code one may use / or \
-    if where:
-        filename = os.sep.join([share, where, filename])
-    else:
-        filename = os.sep.join([share, filename])
+    filename = os.sep.join([share, filename])
     if os.path.exists(filename) is False:
         raise Exception('unknown file %s' % filename)
     return filename

@@ -59,6 +59,10 @@ class Options(argparse.ArgumentParser):
                            help="""All fragment below the lower bound are ignored (inclusive)""")
         group.add_argument('-u', "--upper-bound", default=6000, type=int,
                    help="""All fragment above the upper bound are ignored (inclusive)""")
+        group.add_argument("-s", "--sigma", default=50, type=float,
+                           help="""""")
+        group.add_argument("-g", "--guess", default=None, type=float,
+                           help="""""")
 
 
 def main(args=None):
@@ -67,6 +71,7 @@ def main(args=None):
     print_color(msg, purple, underline=True)
 
     msg = "Version: %s\n" % version
+    msg += "Author: Thomas Cokelaer thomas.cokelaer@pasteur.fr\n"
     msg += "Information and documentation on " + \
            "https://github.com/C3BI-pasteur-fr/FragmentAnalyser\n"
     print_color(msg, purple)
@@ -98,7 +103,10 @@ def main(args=None):
 
     # Save the CSV summary files setting the precision
 
-    plate = Plate(filenames)
+    plate = Plate(filenames, guess=options.guess,
+                  sigma=options.sigma,
+                  lower_bound=options.lower_bound,
+                  upper_bound=options.upper_bound)
     plate.analyse() # by default keep all data
 
     # apply precision on numeric data

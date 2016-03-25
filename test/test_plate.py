@@ -1,4 +1,5 @@
 from fragment_analyser.plate import Plate
+from fragment_analyser import fa_data
 import glob
 import pandas as pd
 
@@ -7,14 +8,20 @@ import pandas as pd
 def test_plate():
 
     # unstructured format
-    filenames = glob.glob("test_input*.csv")
+    filenames = [fa_data("examples/test_input_well_A.csv"),
+        fa_data("examples/test_input_well_B.csv")]
+
+
     plate = Plate(filenames)
-    plate.output_filename = "test_output.csv"
-    plate.to_csv()
+    plate.analyse()
+    plate.filterout()
+    print(plate)
 
-    # structured format
-    df1 = pd.read_csv("./test_plate.csv")
-    df2 = pd.read_csv("./test_output.csv")
-    assert all(df1 == df2)
 
-    # todo : remove the test_output.csv file
+
+
+    filenames = [fa_data("standard_with_flat_cases/peak_table.csv")]
+    plate = Plate(filenames)
+    plate.analyse()
+    plate.filterout()
+    

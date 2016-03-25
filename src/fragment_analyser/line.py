@@ -19,12 +19,13 @@ class Line(object):
 
     Used by :class:`~fragment_analyser.plate.Plate`
     """
-    def __init__(self, filename, sigma=50, control="Ladder"):
+    def __init__(self, filename, sigma=50, lower_bound=120, upper_bound=6000,
+                 control="Ladder"):
 
         self.number = None
 
-
-        ptr = PeakTableReader(filename, sigma=sigma)
+        ptr = PeakTableReader(filename, sigma=sigma, lower_bound=lower_bound,
+                              upper_bound=upper_bound)
         self._nwells = ptr._nwells
 
         # identify the ladder if any
@@ -39,14 +40,12 @@ class Line(object):
             else:
                 self.wells.append(ptr.wells[i])
 
-    #def append(self, well):
-    #    self.wells.append(well)
-
     def guess_peak(self):
         """guess peak position
 
         assuming that peak is at the same position, we could estimate the
-        peak position by taking the median value across the 12 wells.
+        peak position by taking the median value of the max peak across
+        the 12 wells.
 
         None values are ignored if any.
 
@@ -62,25 +61,41 @@ class Line(object):
             well.guess = guess
 
     def get_peaks(self):
+        """Return list of max peaks in the N wells"""
         peaks = [well.get_peak() for well in self.wells]
         return peaks
 
     def get_well_names(self):
+        """Return the names of all wells"""
         return [well.well_ID for well in self.wells]
-
-    def get_ng_per_ul(self):
-        return [well.get_ng_per_ul() for well in self.wells]
 
     def diagnostic(self, ymax=None):
         """Shows detected peaks for each well and confidence.
 
 
-        We use MAD instead of standard deviation since we may have very heterogenous data
-        If there are several types of experiments, the enveloppe may not have nay meaning.
-        If we have homogenous experiments, then outliers may biased the estimation of the
-        standard deviation significantly. We therefore use a MAD metric (see :meth:`get_mad)`.
+        We use MAD instead of standard deviation since we may have very
+        heterogenous data. If there are several types of experiments, the
+        enveloppe may not have nay meaning. If we have homogenous experiments,
+        then outliers may biased the estimation of the standard deviation
+        significantly. We therefore use a MAD metric (see :meth:`get_mad)`.
 
+        .. plot::
+            :include-source:
 
+            from pylab import figure
+            from fragment_analyser import Line, fa_data
+            l = Line(fa_data('alternate/peaktable.csv'))
+            l.diagnostic()
+
+            figure(2)
+            from fragment_analyser import Line, fa_data
+            l = Line(fa_data('standard_with_flat_cases/peak_table.csv'))
+            l.diagnostic()
+
+            figure(3)
+            from fragment_analyser import Line, fa_data
+            l = Line(fa_data('standard_mix_cases/peak_table.csv'))
+            l.diagnostic()
 
         """
         peaks = [well.get_peak() for well in self.wells]

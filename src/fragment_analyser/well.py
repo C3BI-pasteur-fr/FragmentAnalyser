@@ -4,18 +4,31 @@ import pylab
 
 # a data structure to handle the Well with a given sample 
 class Well(object):
-    """Class dedicated to a well
+    """Hold data related to a single well
 
+    Most of the time, there is a strong peak at :math:`X=1` and :math:`X=6000`.
+    You may then have 1 to N other peaks.
 
+    The goal is to find the relevant peak corresponding to the sample.
 
-    In addition to the original data, those columns are added for convenience:
+    Usually, the peak is around a given :math:`X_0` position but other strong peaks
+    may be present, making the automatic detection difficult.
 
-    let us denote X = Size (bp) and C = ng/ul column
+    We therefore multiply the data by a weight function, which is
+    a gaussian distribution centered around the expected position (:math:`X_0`)
+    and sigma provided as parameters (default to 50).
 
-    - amount = (C / 1000) / (X [bp] * mv [daltons/bp] / 1000)
-    so amount is in ng/ul ?
+    Value outside the range [lower_bound, upper_bound] are removed.
 
-    where mw = 650 (daltons per base pair)
+    In addition to the original data, a column called **amount** is
+    added and is computed as
+
+    .. math::
+
+        (C / 1000) / (X  * MV / 1000)
+
+    with :math:`X` the **Size (bp)** column, :math:`C`  the **ng/ul** column
+    and MV a constant set to 650 (daltons per base pair).
     """
     def __init__(self, data, sigma=50, lower_bound=120, upper_bound=6000):
         """.. rubric:: Constructor
@@ -27,6 +40,7 @@ class Well(object):
 
         # !! data may be empty once the 0 and 6000 controls are removed
         #print("Filtering out values <= %s or >= %s" % (lower_bound, upper_bound))
+
         mask = data['Size (bp)'].apply(lambda x: x>lower_bound and x<upper_bound)
         self.df = self.df[mask]
 
@@ -54,12 +68,14 @@ class Well(object):
         columns[i2], columns[i1] = columns[i1], columns[i2]
         self.df = self.df.loc[:, columns]
 
-
     def get_peak_and_index(self):
-        df = self.df.copy()
-        #mask = df['Size (bp)'].astype(float) > self.lower_bp_filter
-        #df = df[mask]
+        """Get the position of the peak with maximum height
 
+        :return: nothing if no peaks found in the valid range otherwise
+            returns peak position (in bp) and the index within the dataframe
+            :attr:`df`.
+        """
+        df = self.df.copy()
         if len(df) == 0:
             return None
 
@@ -85,6 +101,7 @@ class Well(object):
         return peak_pos, index
 
     def get_peak(self):
+        """Returns peak position if found (otherwise None)"""
         try:
             # get_peak_and_index may return None
             maximum, index = self.get_peak_and_index()
@@ -92,27 +109,26 @@ class Well(object):
         except:
             return None
 
-    def get_ng_per_ul(self):
-        try:
-            maximum, index = self.get_peak_and_index()
-            return float(self.df.ix[index]['ng/ul'])
-        except:
-            return None
-
-    def get_mw(self, constant=650):
-        try:
-            return self.get_peak() * constant / 1000.
-        except:
-            return None
-
     def plot(self, marker='o', color='red', m=0, M=6000):
+        """Plots the position / height of the peaks in the well
+
+        .. plot::
+            :include-source:
+
+            from fragment_analyser import Line, fa_data
+            l = Line(fa_data("alternate/peaktable.csv"))
+            well = l.wells[0]
+            well.plot()
+
+        """
         x = self.df['Size (bp)'].astype(float).values
         y = self.df['RFU'].astype(float).values
         if len(x) == 0:
             print("Nothing to plot (no peaks)")
             return
         pylab.stem(x, y, marker=marker, color=color)
-        pylab.xlim([m, M])
+        pylab.semilogx()
+        pylab.xlim([1, M])
         pylab.ylim([0, max(y)*1.2])
         pylab.grid(True)
         return x, y

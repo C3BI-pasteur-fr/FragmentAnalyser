@@ -39,3 +39,5 @@ Fragment Analyser
     :members:
     :inherited-members:
     :synopsis: 
+
+.. automodule:: fragment_analyser

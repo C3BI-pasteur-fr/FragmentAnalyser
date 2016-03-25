@@ -73,7 +73,7 @@ class PeakTableReader(object):
 
 
     """
-    def __init__(self, filename, sigma=50):
+    def __init__(self, filename, sigma=50, lower_bound=120, upper_bound=6000):
         """.. rubric:: Constructor
 
         :param filename: a valid fragment analyser input file
@@ -82,6 +82,8 @@ class PeakTableReader(object):
         """
         self.filename = filename
         self.sigma = sigma
+        self.lower_bound = lower_bound
+        self.upper_bound = upper_bound
 
         # guess the mode (CSV input files are in mode alternate or mode standard)
         self._guess_mode()
@@ -90,7 +92,6 @@ class PeakTableReader(object):
         # interpretation:
         self.interpret()
         self._nwells = len(self.wells)
-
 
     def _guess_mode(self):
         df = pd.read_csv(self.filename, sep=",")
@@ -164,9 +165,8 @@ class PeakTableReader(object):
                 else:
                     data[colname] = data[colname].astype(float)
 
-
-
-            well = Well(data, sigma=self.sigma)
+            well = Well(data, sigma=self.sigma, lower_bound=self.lower_bound,
+                        upper_bound=self.upper_bound)
             wells.append(well)
 
         self.wells = wells
@@ -232,7 +232,8 @@ class PeakTableReader(object):
 
             data.insert(0, "Sample ID", well_ID)
             data.insert(0, "Well", well_name)
-            well = Well(data, sigma=self.sigma)
+            well = Well(data, sigma=self.sigma, upper_bound=self.upper_bound,
+                        lower_bound=self.lower_bound)
             wells.append(well)
 
         self.wells = wells

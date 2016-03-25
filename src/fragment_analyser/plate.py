@@ -5,28 +5,20 @@ from .line import Line
 import numpy as np
 import pandas as pd
 
-
 # Used to avoid issue with missing DISPLAY on the cluster.
 import matplotlib
 matplotlib.use('Agg')
 
 
-
 class Plate(object):
-    """Dedicated class for plates
+    """Reads several files (lines) and save a summary file
 
     A plate contains (at most) 8 :class:`lines` with 12 :class:`well` each.
 
-    This is a Abstract base class and 2 children classes are derived from it to 
-    read different types of input data:
-
-        - :class:`PlatePF1`
-        - :class:`PlatePFGE`
 
     """
-    def __init__(self, filenames, guess=None, lower_bound=1,
-                 upper_bound=1e6,  sigma=50):
-
+    def __init__(self, filenames, guess=None, lower_bound=120,
+                 upper_bound=6000,  sigma=50):
         self.filenames = filenames
         self.guess = guess
         self.sigma = sigma
@@ -52,7 +44,9 @@ class Plate(object):
         for filename in self.filenames:
             print(" - " + filename),
             try:
-                line = Line(filename, sigma=self.sigma)
+                line = Line(filename, sigma=self.sigma,
+                            lower_bound=self.lower_bound,
+                            upper_bound=self.upper_bound)
 
                 # THIS LINE IS IMPORTANT TO WEIGHT DOWN OUTLIERS
                 line.set_guess(self.guess)
@@ -62,6 +56,10 @@ class Plate(object):
                 print('WARNING. This file could not be interpreted')
 
     def analyse(self):
+        """Reads the N files and create a summary data set
+
+        Must be called before :meth:`to_csv`.
+        """
         data = []
         for line in self.lines:
             for well in line.wells:
@@ -93,6 +91,12 @@ class Plate(object):
         self.data.to_csv(filename, index=False)
 
     def filterout(self):
+        """Remove entries that are outside the expected range.
+
+        To be used if the data is homogeneous to remove outliers;
+
+
+        """
         # inplace
         df = self.data
         # Compute the MAD
@@ -102,7 +106,6 @@ class Plate(object):
         mad = tools.get_mad(peaks)
         if mad < self.minmad:
             mad = self.minmad
-
 
         data = df['Size (bp)']
         from .tools import nonemedian
