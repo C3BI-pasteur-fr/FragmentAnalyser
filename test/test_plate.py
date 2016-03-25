@@ -1,4 +1,4 @@
-from fragment_analyser.plate import PlatePFGE
+from fragment_analyser.plate import Plate
 import glob
 import pandas as pd
 
@@ -8,7 +8,7 @@ def test_plate():
 
     # unstructured format
     filenames = glob.glob("test_input*.csv")
-    plate = PlatePFGE(filenames)
+    plate = Plate(filenames)
     plate.output_filename = "test_output.csv"
     plate.to_csv()
 

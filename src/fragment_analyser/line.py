@@ -19,18 +19,25 @@ class Line(object):
 
     Used by :class:`~fragment_analyser.plate.Plate`
     """
-    def __init__(self, filename, sigma=50, nwells=12, control="last"):
+    def __init__(self, filename, sigma=50, control="Ladder"):
 
         self.number = None
-        self._nwells = nwells
 
-        ptr = PeakTableReader(filename, sigma=sigma, nwells=self._nwells)
-        if control == "last":
-            self.wells = ptr.wells[0:-1]
-            self.control = ptr.wells[-1]
-        else:
-            raise NotImplementedError
 
+        ptr = PeakTableReader(filename, sigma=sigma)
+        self._nwells = ptr._nwells
+
+        # identify the ladder if any
+
+        self.control = None
+        self.wells = []
+        for i in range(self._nwells):
+            if ptr.wells[i].well_ID == control:
+                if i != self._nwells-1:
+                    raise NotImplementedError("Expecting the Ladder/control to be on the last well")
+                self.control = ptr.wells[i]
+            else:
+                self.wells.append(ptr.wells[i])
 
     #def append(self, well):
     #    self.wells.append(well)
@@ -133,7 +140,6 @@ class Line(object):
                 # we are sliding inside a contiguous chunk
                 X.append(i)
                 Y.append(peak)
-        print 'done'
 
         pylab.legend()
 

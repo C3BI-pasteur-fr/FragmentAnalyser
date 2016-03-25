@@ -45,6 +45,16 @@ class Well(object):
         peaks = self.df["Size (bp)"]
         self.df['amount (nM)'] = concs * 1000. / (peaks * self.mw_dna / 1000.)
 
+        # we re-arrange some data for the user convenience
+        # swap those two columns: u'RFU', u'Avg. Size' to have the order:
+        # ng/ul - Avg Size and RFU
+        columns = list(self.df.columns)
+        i1 = columns.index('RFU')
+        i2 = columns.index('Avg. Size')
+        columns[i2], columns[i1] = columns[i1], columns[i2]
+        self.df = self.df.loc[:, columns]
+
+
     def get_peak_and_index(self):
         df = self.df.copy()
         #mask = df['Size (bp)'].astype(float) > self.lower_bp_filter

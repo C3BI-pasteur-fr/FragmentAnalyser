@@ -73,17 +73,15 @@ class PeakTableReader(object):
 
 
     """
-    def __init__(self, filename, sigma=50, nwells=12):
+    def __init__(self, filename, sigma=50):
         """.. rubric:: Constructor
 
         :param filename: a valid fragment analyser input file
         :param sigma:
-        :param nwells: expected number of plates (defaults to 12)
 
         """
         self.filename = filename
         self.sigma = sigma
-        self._nwells = nwells
 
         # guess the mode (CSV input files are in mode alternate or mode standard)
         self._guess_mode()
@@ -91,6 +89,8 @@ class PeakTableReader(object):
         # two types of input data (standard or alternate) require specific
         # interpretation:
         self.interpret()
+        self._nwells = len(self.wells)
+
 
     def _guess_mode(self):
         df = pd.read_csv(self.filename, sep=",")
@@ -103,9 +103,6 @@ class PeakTableReader(object):
         # Each of the 8 plates is labelled by a letter from A to H
         names = [x for x in self.df[0].dropna().unique() if x.strip()
                  and x[0] in 'ABCDEFGH']
-
-        if len(names) != self._nwells:
-            raise ValueError("Expected to find %s wells but got %s" % (self._nwells, len(names)))
 
         # make sure there is no spaces
         self.names = [name.strip() for name in names]

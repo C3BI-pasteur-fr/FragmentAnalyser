@@ -7,6 +7,9 @@ from easydev.console import red, purple, darkgreen
 from fragment_analyser import version
 from .plate import Plate
 
+
+from easydev import Logging
+
 # Used to avoid issue with missing DISPLAY on the cluster.
 import matplotlib
 matplotlib.use('Agg')
@@ -36,8 +39,6 @@ class Options(argparse.ArgumentParser):
     fragment_analyser.py --pattern 2015*csv --create-images
 
         """
-
-
         epilog = """ -- """
         description = """ todo """
         super(Options, self).__init__(usage=usage, prog=prog, epilog=epilog,
@@ -52,16 +53,19 @@ class Options(argparse.ArgumentParser):
                            dest="create_images",
                            help="""For each input file, an image is created.
                                 If not required, use this option""")
-        group.add_argument('-t', "--tag", default="", type=str,
-                           help="")
-
-
-
+        group.add_argument('-r', '--precision', type=int, default=8,
+                           help="set number of digits")
+        group.add_argument('-l', "--lower-bound", default=120, type=int,
+                           help="""All fragment below the lower bound are ignored (inclusive)""")
+        group.add_argument('-u', "--upper-bound", default=6000, type=int,
+                   help="""All fragment above the upper bound are ignored (inclusive)""")
 
 
 def main(args=None):
+
     msg = "Welcome to FragmentAnalyser standalone application"
     print_color(msg, purple, underline=True)
+
     msg = "Version: %s\n" % version
     msg += "Information and documentation on " + \
            "https://github.com/C3BI-pasteur-fr/FragmentAnalyser\n"
@@ -71,8 +75,6 @@ def main(args=None):
         args = sys.argv[:]
     if len(args) == 1:
         args += ['--help']
-
-
 
     options = Options()
     options = options.parse_args(args[1:])
@@ -93,38 +95,61 @@ def main(args=None):
     output_filename = options.output
 
 
-    print_color("\n\nWhat type of input do you have across the line(s) ? ", darkgreen)
-    mode = raw_input("uniform (u) or mix of experiments (m) ? (default is m if you press enter):")
 
-    if mode == "u": mode = "uniform"
-    elif mode == "m": mode = "mix"
-    else:
-        print(red('default mode (mix of experiments) selected'))
-        mode = 'mix'
+    # Save the CSV summary files setting the precision
 
-    plate = Plate(filenames, mode)
+    plate = Plate(filenames)
+    plate.analyse() # by default keep all data
 
-    plate.to_csv(output_filename)
+    # apply precision on numeric data
+    for col in plate.data._get_numeric_data().columns:
+        data = plate.data[col].apply(lambda x: round(x, options.precision))
+        plate.data[col] = data
+
+    plate.to_csv(output_filename.replace(".csv", "_all.csv"))
+
+    # we may also consider that lines are uniform so outliers must be crossed
+    plate.to_csv(output_filename.replace(".csv", "_filtered.csv"))
 
     if options.create_images is False:
         pass
     else:
-        print("Creating images")
+        print("\nCreating images")
         count = 1
+
+        image_filenames = []
         for filename, line in zip(filenames, plate.lines):
             # get the filename
             filename = os.path.split(filename)[1]
 
             # replace extension csv to png
             lhs, _ext = os.path.splitext(filename)
-            filename = '%s_%s.png' % (lhs, count)
 
-            print filename
+            image_filename = lhs + ".png"
+            if image_filename not in image_filenames:
+                image_filenames.append(image_filename)
+            else: # if it exists already, let us append a unique id:
+                image_filename = lhs + "_%s.png" % count
+                count += 1
+                image_filenames.append(image_filename)
 
-            print("Creating image %s out of %s (%s)" % (count, len(plate.lines), filename))
+            print("Creating image %s out of %s (%s)" %
+                  (count, len(plate.lines), image_filename))
             line.diagnostic()
-            pylab.savefig(filename)
+            pylab.savefig(image_filename)
 
-            count += 1
+
+
+    # Create a log file
+    with open("fa.log", "w") as fout:
+        fout.write("Command run:\n")
+        fout.write("\n%s" % " ".join(args))
+        fout.write("\n\n%s files were read and interpreted\n" % len(filenames))
+        for filename in filenames:
+            fout.write(" - %s" % filename)
+        fout.write("\nParameter: %s" % plate.__str__())
+
+
+
 
 
