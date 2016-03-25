@@ -9,13 +9,17 @@ class Well(object):
 
 
     """
-    def __init__(self, name, wellID, data, sigma=50):
+    def __init__(self, data, sigma=50):
         """.. rubric:: Constructor
 
         """
-        self.df = data
-        self.name = name
-        self.wellID = wellID
+        self.df = data.copy()
+        try:
+            self.name = data['Well'].unique()[0]
+            self.well_ID = data['Sample ID'].unique()[0]
+        except:
+            print("empty well'")
+
         self.tic = None
         self.tim = None
         self.total_concentration = None

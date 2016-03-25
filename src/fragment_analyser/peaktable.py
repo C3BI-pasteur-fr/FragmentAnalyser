@@ -167,14 +167,16 @@ class PeakTableReader(object):
                 else:
                     data[colname] = data[colname].astype(float)
 
-            well_ID = data['Sample ID'].unique()[0]
 
             # !! data may be empty once the 0 and 6000 controls are removed
             mask = data['Size (bp)'].apply(lambda x: x>1 and x<6000)
             data = data[mask]
 
-            well = Well(well_name, well_ID, data, sigma=self.sigma)
+            well = Well(data, sigma=self.sigma)
+            well.name = well_name
+            well.well_ID = "?"
             wells.append(well)
+
         self.wells = wells
 
     def interpret_alternate(self):
@@ -229,13 +231,13 @@ class PeakTableReader(object):
 
             data = data[mask].copy()
 
-            data['TIC (ng/uL)'] = float(metadata.ix[0][1])
+            # ul should be uL but keep ul as in the original CSV file for now
+            data['TIC (ng/ul)'] = float(metadata.ix[0][1])
             data['TIM (nmole/L)'] = float(metadata.ix[1][1])
-            data['Total Conc.: (ng/uL)'] = float(metadata.ix[2][1])
+            data['Total Conc. (ng/ul)'] = float(metadata.ix[2][1])
 
-            # convert all data to the correct type:
             # get rid of rows where there are NAs, so TIC; TIM, Total conc
-            # should be dropped 
+            # should be dropped now.
             data.dropna(inplace=True)
 
             for colname in data.columns:
@@ -245,7 +247,13 @@ class PeakTableReader(object):
                 #except:
                 #    data[colname] = data[colname]
 
-            well = Well(well_name, well_ID, data, sigma=self.sigma)
+            data.insert(0, "Sample ID", well_ID)
+            data.insert(0, "Well", well_name)
+            well = Well(data, sigma=self.sigma)
+            # name and ID are infered from the data inside Well() but if there is no
+            # data, it is not possible. So, we write the name and ID here again:
+            well.name = well_name
+            well.well_ID = well_ID
             wells.append(well)
 
         self.wells = wells

@@ -6,6 +6,16 @@ from .well import Well
 from .plate import Plate, PlatePF1, PlatePFGE
 from .peaktable import PeakTableReader
 
+import pkg_resources
+import easydev
+
+try:
+    version = pkg_resources.require("fragment_analyser")[0].version
+    __version__ = version
+except:
+    # update this manually is possible when the version in the
+    # setup changes
+    version = "?"
 
 
 # TODO a get data file ?

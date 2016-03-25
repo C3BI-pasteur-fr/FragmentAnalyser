@@ -105,8 +105,9 @@ class Line(object):
                 continue
             elif peak is None or (i == len(peaks)-1):
                 # we ended a chunk of valid data, let us plot it
-                X.append(i)
-                Y.append(peak)
+                if peak is not None:
+                    X.append(i)
+                    Y.append(peak)
 
                 if len(X) == 1: # expand the window so that fill_between shows something
                     Y.append(Y[0])
