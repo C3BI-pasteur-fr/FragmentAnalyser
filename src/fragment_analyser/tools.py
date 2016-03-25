@@ -9,7 +9,9 @@ def nonemedian(data):
     return np.median(data)
 
 
-
+def get_mad(data):
+    mad = nonemedian(abs(data - nonemedian(data)))
+    return mad
 
 
 

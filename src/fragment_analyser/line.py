@@ -59,7 +59,7 @@ class Line(object):
         return peaks
 
     def get_well_names(self):
-        return [well.wellID for well in self.wells]
+        return [well.well_ID for well in self.wells]
 
     def get_ng_per_ul(self):
         return [well.get_ng_per_ul() for well in self.wells]
@@ -147,7 +147,6 @@ class Line(object):
 
         # we may have None in the list of peaks
         peaks = [x for x in peaks if x is not None]
-
         sigma = nonemedian(abs(peaks - nonemedian(peaks)))
 
         if sigma < minimum:

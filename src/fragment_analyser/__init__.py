@@ -3,7 +3,7 @@
 """
 from .line import Line
 from .well import Well
-from .plate import Plate, PlatePF1, PlatePFGE
+from .plate import Plate
 from .peaktable import PeakTableReader
 
 import pkg_resources

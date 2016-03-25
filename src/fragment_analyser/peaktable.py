@@ -168,13 +168,8 @@ class PeakTableReader(object):
                     data[colname] = data[colname].astype(float)
 
 
-            # !! data may be empty once the 0 and 6000 controls are removed
-            mask = data['Size (bp)'].apply(lambda x: x>1 and x<6000)
-            data = data[mask]
 
             well = Well(data, sigma=self.sigma)
-            well.name = well_name
-            well.well_ID = "?"
             wells.append(well)
 
         self.wells = wells
@@ -217,43 +212,30 @@ class PeakTableReader(object):
             # TIM, Total conc). Let us extract the metadata to get the value
             # of the RIC, TIM, Total conc
             metadata = data[data['Peak ID'].isnull()]
-
-            # access 
             metadata = metadata.iloc[:, [1,2,3]]  # keep columns with data
             metadata = metadata.dropna()
             metadata.reset_index(inplace=True, drop=True)
-
-            # Remove the rows where Size bp is the lower or upper mark (usually
-            # at size = 1 or 6000. It has a string LM or UM in it
-            self.data= data
-            mask = data['Size (bp)'].apply(lambda x: isinstance(x, str) 
-                    and 'UM' not in x and 'LM' not in x)
-
-            data = data[mask].copy()
 
             # ul should be uL but keep ul as in the original CSV file for now
             data['TIC (ng/ul)'] = float(metadata.ix[0][1])
             data['TIM (nmole/L)'] = float(metadata.ix[1][1])
             data['Total Conc. (ng/ul)'] = float(metadata.ix[2][1])
 
-            # get rid of rows where there are NAs, so TIC; TIM, Total conc
-            # should be dropped now.
-            data.dropna(inplace=True)
+            # get rid of TIC; TIM, Total conc rows (where Peak ID is NA)
+            data = data[data['Peak ID'].isnull() == False].copy()
+
+            # Get rid of UM and LM in (Siwe bp) column
+            data["Size (bp)"] = data["Size (bp)"].apply(lambda x:
+                                    x.replace('(UM)', '').replace("(LM)", ""))
 
             for colname in data.columns:
                 if colname in ['Well', 'Sample ID']:
                     pass
                 data[colname] = data[colname].astype(float)
-                #except:
-                #    data[colname] = data[colname]
 
             data.insert(0, "Sample ID", well_ID)
             data.insert(0, "Well", well_name)
             well = Well(data, sigma=self.sigma)
-            # name and ID are infered from the data inside Well() but if there is no
-            # data, it is not possible. So, we write the name and ID here again:
-            well.name = well_name
-            well.well_ID = well_ID
             wells.append(well)
 
         self.wells = wells

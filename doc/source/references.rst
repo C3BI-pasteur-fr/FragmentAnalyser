@@ -33,7 +33,7 @@ peaktable
     :inherited-members:
     :synopsis: 
 
-Fragement Analyser
+Fragment Analyser
 ----------------------
 .. automodule:: fragment_analyser.pipelines
     :members:
