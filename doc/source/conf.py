@@ -28,7 +28,8 @@ except Exception, e:
 
 
 import pkg_resources
-version = "0.1"
+import fragment_analyser
+version = fragment_analyser.version
 release = version
 author = "Thomas Cokelaer"
 title = "FragmentAnalyser"

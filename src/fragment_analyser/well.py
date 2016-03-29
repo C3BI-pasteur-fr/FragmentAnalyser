@@ -131,4 +131,6 @@ class Well(object):
         pylab.xlim([1, M])
         pylab.ylim([0, max(y)*1.2])
         pylab.grid(True)
+        pylab.xlabel("size (bp)")
+        pylab.ylabel("RFU")
         return x, y

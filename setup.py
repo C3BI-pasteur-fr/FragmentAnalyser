@@ -73,12 +73,12 @@ setup(
     classifiers      = metainfo['classifiers'],
 
     # package installation
-    package_dir = {'share.data': 'share/data', '':'src'},
+    package_dir = {
+        'share.data': 'share/data',
+        '':'src'},
     packages = ['fragment_analyser'],
-  
 
     zip_safe=False,
-    #packages = find_packages(),
     include_package_data = True,
 
 
@@ -86,6 +86,7 @@ setup(
     # so '' :['README.rst'] will include all README.rst recursively
     package_data = {
         'share.data' : ['*.txt', '*.csv', '*.tsv', '*.gz', 'README.rst'],
+        'share.data.examples' : ['*.csv'],
         '' : ['README.rst'],
         },
 

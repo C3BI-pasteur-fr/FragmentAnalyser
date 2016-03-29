@@ -117,6 +117,7 @@ def main(args=None):
     plate.to_csv(output_filename.replace(".csv", "_all.csv"))
 
     # we may also consider that lines are uniform so outliers must be crossed
+    plate.filterout() 
     plate.to_csv(output_filename.replace(".csv", "_filtered.csv"))
 
     if options.create_images is False:
@@ -154,7 +155,7 @@ def main(args=None):
         fout.write("\n%s" % " ".join(args))
         fout.write("\n\n%s files were read and interpreted\n" % len(filenames))
         for filename in filenames:
-            fout.write(" - %s" % filename)
+            fout.write(" - %s\n" % filename)
         fout.write("\nParameter: %s" % plate.__str__())
 
 
