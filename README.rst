@@ -84,6 +84,12 @@ nM: the concentration in nM unit. conc * 1000 / ((Size) * 650 /1000) where 650
 .. image:: diagnostic.png
 
 
+More help ?
+==============
+
+Please see the notebooks directory or the doc directory. The doc directory is a sphinx project and should be compiled for a better rendering. 
+
+
 
 
 
