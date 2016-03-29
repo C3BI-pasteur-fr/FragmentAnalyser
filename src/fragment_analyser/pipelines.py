@@ -40,7 +40,7 @@ class Options(argparse.ArgumentParser):
 
         """
         epilog = """ -- """
-        description = """ todo """
+        description = """ Reads a set of CSV files from Fragment Analyser systems and created (1) image of detected peaks across each line (each CSV) and (2) 2 CSV files summarising the detected peaks in all input CSV files. The 2 output CSV files  contains the same data but the **filtered** assume a homogeneous set of peaks and crossed the ones that are identified as outliers."""
         super(Options, self).__init__(usage=usage, prog=prog, epilog=epilog,
                                       description=description,
                                       formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -54,15 +54,18 @@ class Options(argparse.ArgumentParser):
                            help="""For each input file, an image is created.
                                 If not required, use this option""")
         group.add_argument('-r', '--precision', type=int, default=8,
-                           help="set number of digits")
+                           help="set number of digits in the output CSV")
         group.add_argument('-l', "--lower-bound", default=120, type=int,
-                           help="""All fragment below the lower bound are ignored (inclusive)""")
+                           help="""All fragments below the lower bound are ignored (inclusive)""")
         group.add_argument('-u', "--upper-bound", default=6000, type=int,
                    help="""All fragment above the upper bound are ignored (inclusive)""")
         group.add_argument("-s", "--sigma", default=50, type=float,
-                           help="""""")
+                           help="""Peaks are weighted down by a gaussian
+distribution centered around the guessed best peak (see --guess) and with a
+sigma of 50 by default, which can be changed with this parameter.""")
         group.add_argument("-g", "--guess", default=None, type=float,
-                           help="""""")
+                           help="""Position of the peak to be identified. If not
+provided, guessed from the median of the maximum across the line.""")
 
 
 def main(args=None):
