@@ -14,8 +14,9 @@ On central-bio, edit your .profile and add this line::
 When you open a new terminal, type those commands to load fragment_analyser 
 in your environment::
 
-    module load pyonbic
     module load fragment_analyser
+
+.. note:: behind the scene, it changes your Python environment to use Python 3.4
 
 Analyse some files
 ~~~~~~~~~~~~~~~~~~~~
@@ -31,7 +32,9 @@ If you do not want to create images, add ::
 
 Results are stored in **results.csv** file.
 
+There are other options related to the analyse. Please type::
 
+    fragment_analyser --help
 
 
 Input files must be CSV with the 12 samples. The number of files is not
@@ -44,9 +47,7 @@ its position (Size in base pair), concentration and a quantity refered to as nM.
 
 Usage::
 
-
-    python fragment_analyser --pattern files*csv --create-images
-        --output results.csv
+    python fragment_analyser --pattern files*csv 
 
 
 The file results.csv should contains 4 columns::
