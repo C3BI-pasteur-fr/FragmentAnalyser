@@ -1,18 +1,21 @@
 FragmentAnalyser utilities
 ===========================
 
-Usage 
--------
+Usage on BIC on central-bio
+-----------------------------
 
 Load the module
 ~~~~~~~~~~~~~~~~
 
-On central-bio, edit your .profile and add this line::
+**To do only once**: On central-bio, open a unix shell and if not already done, edit the file .profile (in your home directory) and add this line::
 
     module use /pasteur/projets/Matrix/modules
 
-When you open a new terminal, type those commands to load fragment_analyser 
-in your environment::
+quit the shell (or source the .profile file).
+
+
+When you open a new terminal, you should now be able to use the fragment_analyser module. You can load it 
+in your environment as follows::
 
     module load fragment_analyser
 
