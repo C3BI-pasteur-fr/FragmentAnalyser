@@ -53,33 +53,27 @@ Usage::
 
 The file results.csv should contains 4 columns::
 
-    names,ng/uL (QUBIT/FA),Taille (bp),nM
-    WT1_1,4.0432,691.0,9.00189246354
-    WT2_2,8.3981,670.0,19.2838117107
-    WT3_3,6.2781,665.0,14.5242336611
-    WT4_4,9.1844,667.0,21.1841771422
-    WT5_5,,,
-    WT6_6,9.9733,638.0,24.0494333253
-    Delta1_7,18.0203,691.0,40.1208950239
-    Delta2_8,21.1646,691.0,47.1214516309
-    Delta3_9,23.714,695.0,52.4936358605
-    Delta4_10,18.7718,655.0,44.0911332942
-    Delta5_11,22.9869,696.0,50.8110079576
-    Ladder,,,
-    Delta Compl1_13,2.8591,691.0,6.36557942781
-    Delta Compl2_14,3.6311,689.0,8.10784861003
-    Delta Compl3_15,4.022,690.0,8.96767001115
-    Delta Compl4_16,7.3515,701.0,16.1340941512
+    Well,Sample ID,Size (bp),% (Conc.),nmole/L,ng/ul,Avg. Size,RFU,TIC (ng/ul),TIM (nmole/L),Total Conc. (ng/ ul),amount (nM)
+    D1,T4,649.0,94.9,11.045,4.3591,716.0,1753.0,4.5912,17.688,4.6007,10.33329382
+    D2,T7,610.0,91.9,22.672,8.4052,651.0,4773.0,9.1461,44.465,9.1541,21.19848676
+    D3,P1,667.0,92.7,9.132,3.6994,693.0,1999.0,3.989,20.247,4.0108,8.53281052
+    D4,Mu,688.0,84.5,3.622,1.5137,678.0,795.0,1.7909,13.168,1.7982,3.384839
+    D5,rien,,,,,,,,,,
+    D6,rien,,,,,,,,,,
+    D7,rien,,,,,,,,,,
+    D8,rien,,,,,,,,,,
+    D9,rien,990.0,100.0,0.001,0.0006,982.0,20.0,0.0006,0.001,0.0369,0.0009324
+    D10,rien,,,,,,,,,,
+    D11,rien,,,,,,,,,,
+    D12,Ladder,,,,,,,,,,
 
 The 12th well (Ladder) is always empty.
 
-The columns are:
+All columns are copies of input files except for the last column that is the concentration in nM unit. and is computed as::
 
-names: name of the well
-ng/ul: concentration in ng/uL
-Size (bp): the length in base pair
-nM: the concentration in nM unit. conc * 1000 / ((Size) * 650 /1000) where 650
-    is a hard coded value (mw_dna)
+    conc * 1000 / ((Size) * 650 /1000) 
+    
+where 650 is a hard coded value (mw_dna)
 
 
 .. image:: diagnostic.png
