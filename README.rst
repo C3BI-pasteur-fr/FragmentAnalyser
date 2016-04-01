@@ -27,26 +27,24 @@ Analyse some files
 Assuming you want to analyse a set of files starting with '2015' with csv 
 extensions, type::
 
-    fragment_analyser.py --pattern 2015*csv --create-images --output summary.csv
+    fragment_analyser.py --pattern 2015*csv 
 
 If you do not want to create images, add ::
 
     --no-images
 
-Results are stored in **results.csv** file.
+Results are stored in **summary_all.csv** and **summary_filter.csv** files.
 
 There are other options related to the analyse. Please type::
 
     fragment_analyser --help
 
 
-Input files must be CSV with the 12 samples. The number of files is not
-important but should be 8 (8 lines on a plate ).
+Input files must be CSV with the 12 wells. The number of files is not
+important.
 
-The tool fragmenet_analyser will identify the peak across the 12 samples that is
-the most relevant. If a peak is found but clearly does not resemble the rest, it
-will be set to NA (empty string). Once a peak is identified, we keep track of
-its position (Size in base pair), concentration and a quantity refered to as nM.
+The tool fragment_analyser will identify the peak across the 12 samples that are
+the most relevant. All results will be stored in **summary_all.csv**. If you expect all peaks to be found at the same location, peaks that are outliers should be discarded. In the file **summary_filter.csv** the outliers are to NA (empty string). Once a peak is identified, we keep track of its position (Size in base pair), concentration and a quantity refered to as nM.
 
 Usage::
 
