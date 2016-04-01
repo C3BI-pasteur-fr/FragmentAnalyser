@@ -27,18 +27,7 @@ class Line(object):
         ptr = PeakTableReader(filename, sigma=sigma, lower_bound=lower_bound,
                               upper_bound=upper_bound)
         self._nwells = ptr._nwells
-
-        # identify the ladder if any
-
-        self.control = None
-        self.wells = []
-        for i in range(self._nwells):
-            if ptr.wells[i].well_ID == control:
-                if i != self._nwells-1:
-                    raise NotImplementedError("Expecting the Ladder/control to be on the last well")
-                self.control = ptr.wells[i]
-            else:
-                self.wells.append(ptr.wells[i])
+        self.wells = ptr.wells
 
     def guess_peak(self):
         """guess peak position

@@ -1,5 +1,5 @@
 #!/usr/bin/python
-import pylab
+import numpy as np
 
 
 # a data structure to handle the Well with a given sample 
@@ -44,8 +44,6 @@ class Well(object):
         mask = data['Size (bp)'].apply(lambda x: x>lower_bound and x<upper_bound)
         self.df = self.df[mask]
 
-        self.tic = None
-        self.tim = None
         self.total_concentration = None
         self.guess = None
         self.lower_bp_filter = lower_bound
@@ -67,6 +65,13 @@ class Well(object):
         i2 = columns.index('Avg. Size')
         columns[i2], columns[i1] = columns[i1], columns[i2]
         self.df = self.df.loc[:, columns]
+
+
+        # is it a control ?
+        if self.well_ID.lower() in ['ladder', 'control', 'rien']:
+            mask = [False] * len(self.df)
+            self.df = self.df[mask]
+
 
     def get_peak_and_index(self):
         """Get the position of the peak with maximum height
@@ -92,6 +97,7 @@ class Well(object):
         if self.guess is None:
             pass
         else:
+            import pylab
             weighted_data = pylab.exp(-0.5*( (self.guess - positions.values) /
                 self.sigma)**2)
             data = data * weighted_data
@@ -121,6 +127,7 @@ class Well(object):
             well.plot()
 
         """
+        import pylab
         x = self.df['Size (bp)'].astype(float).values
         y = self.df['RFU'].astype(float).values
         if len(x) == 0:

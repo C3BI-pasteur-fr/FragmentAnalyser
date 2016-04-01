@@ -1,4 +1,5 @@
 #!/usr/bin/python
+import time
 import os
 import sys
 import argparse
@@ -8,12 +9,13 @@ from fragment_analyser import version
 from .plate import Plate
 
 
-from easydev import Logging
 
 # Used to avoid issue with missing DISPLAY on the cluster.
 import matplotlib
 matplotlib.use('Agg')
 import pylab
+
+t3 = time.time()
 
 
 def print_color(txt, func_color=darkgreen, underline=False):
@@ -35,8 +37,8 @@ class Options(argparse.ArgumentParser):
         usage = """
 
     fragment_analyser.py --pattern 2015*csv
-    fragment_analyser.py --pattern 2015*csv --output summary.csv
-    fragment_analyser.py --pattern 2015*csv --create-images
+    fragment_analyser.py --pattern 2015*csv --lower-bound 100
+    fragment_analyser.py --pattern 2015*csv --guess 650 --tag test
 
         """
         epilog = """ -- """
@@ -49,6 +51,10 @@ class Options(argparse.ArgumentParser):
                            help="A pattern to fetch filenames (e.g. 2016*csv)")
         group.add_argument('-o', "--output", type=str, default="summary.csv",
                            help="The name of the output CSV file. Defaults to summary.csv")
+        group.add_argument('-t', "--tag", type=str, default="",
+                           help="""The name of a tag to append before the
+                           extension .csv. For instance --tag test will
+                           create the file summary_test.csv not just summary.csv""")
         group.add_argument('-n', "--no-images",  action="store_false",
                            dest="create_images",
                            help="""For each input file, an image is created.
@@ -66,6 +72,8 @@ sigma of 50 by default, which can be changed with this parameter.""")
         group.add_argument("-g", "--guess", default=None, type=float,
                            help="""Position of the peak to be identified. If not
 provided, guessed from the median of the maximum across the line.""")
+
+
 
 
 def main(args=None):
@@ -117,11 +125,21 @@ def main(args=None):
         data = plate.data[col].apply(lambda x: round(x, options.precision))
         plate.data[col] = data
 
-    plate.to_csv(output_filename.replace(".csv", "_all.csv"))
+    if options.tag:
+
+        plate.to_csv(output_filename.replace(".csv",
+                                             "_all_%s.csv" % options.tag))
+    else:
+        plate.to_csv(output_filename.replace(".csv", "_all.csv"))
 
     # we may also consider that lines are uniform so outliers must be crossed
-    plate.filterout() 
-    plate.to_csv(output_filename.replace(".csv", "_filtered.csv"))
+    plate.filterout()
+
+    if options.tag is not None:
+        plate.to_csv(output_filename.replace(".csv",
+                                             "_filtered_%s.csv" % options.tag))
+    else:
+        plate.to_csv(output_filename.replace(".csv", "_filtered.csv"))
 
     if options.create_images is False:
         pass
@@ -137,7 +155,11 @@ def main(args=None):
             # replace extension csv to png
             lhs, _ext = os.path.splitext(filename)
 
-            image_filename = lhs + ".png"
+            if options.tag is None:
+                image_filename = lhs + ".png"
+            else:
+                image_filename = lhs + "_%s.png" % options.tag
+
             if image_filename not in image_filenames:
                 image_filenames.append(image_filename)
             else: # if it exists already, let us append a unique id:
@@ -153,13 +175,19 @@ def main(args=None):
 
 
     # Create a log file
-    with open("fa.log", "w") as fout:
+    if options.tag is None:
+        log_filename = "fa.log"
+    else:
+        log_filename = "fa_%s.log" % options.tag
+
+    with open(log_filename, "w") as fout:
         fout.write("Command run:\n")
         fout.write("\n%s" % " ".join(args))
-        fout.write("\n\n%s files were read and interpreted\n" % len(filenames))
+        fout.write("\n\n%s file(s) was/were read and interpreted\n" % len(filenames))
         for filename in filenames:
             fout.write(" - %s\n" % filename)
-        fout.write("\nParameter: %s" % plate.__str__())
+        fout.write("\n%s" % plate.__str__())
+        fout.write("\nFragment Analyser version: %s" % version)
 
 
 

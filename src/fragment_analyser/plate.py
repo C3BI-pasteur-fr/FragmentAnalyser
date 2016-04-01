@@ -73,14 +73,14 @@ class Plate(object):
                     N = len(df.columns)
                     df.ix[0] = [well.name, well.well_ID] + [None] * 11
                     data.append(df.ix[0])
-            # if there is a ldder/control, let us add it with only the name
-            # and id, skipping any data
-            if line.control is not None:
+
+            """if line.control is not None:
                 ts = line.control.df.iloc[0].copy()
                 for this in ts.index:
                     if this in ['Well', 'Sample ID']: pass
                     else: ts.ix[this] = None
                 data.append(ts)
+            """
 
         df = pd.DataFrame(data)
         df.reset_index(inplace=True, drop=True)
@@ -109,7 +109,7 @@ class Plate(object):
 
         data = df['Size (bp)']
         from .tools import nonemedian
-        med = nonemedian(data.values)
+        med = nonemedian(data.dropna().values)
 
         mask1 = data < med -3*mad
         mask2 = data > med + 3*mad
@@ -120,5 +120,6 @@ class Plate(object):
         df.loc[mask,columns] = None
 
         self.data = df
+
 
 
