@@ -82,7 +82,10 @@ where 650 is a hard coded value (mw_dna)
 More help ?
 ==============
 
-Please see the notebooks directory or the doc directory. The doc directory is a sphinx project and should be compiled for a better rendering. 
+Please see the notebooks directory or the doc directory. The doc directory is a sphinx project and should be compiled for a better rendering. See also the brief but up-to-date documentation using ::
+
+    fragment_analyser --help
+
 
 
 
