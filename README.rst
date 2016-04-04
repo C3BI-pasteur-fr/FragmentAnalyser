@@ -27,7 +27,7 @@ Analyse some files
 Assuming you want to analyse a set of files starting with '2015' with csv 
 extensions, type::
 
-    fragment_analyser.py --pattern 2015*csv 
+    fragment_analyser --pattern 2015*csv 
 
 If you do not want to create images, add ::
 
@@ -48,7 +48,7 @@ the most relevant. All results will be stored in **summary_all.csv**. If you exp
 
 Usage::
 
-    python fragment_analyser --pattern files*csv 
+    fragment_analyser --pattern files*csv 
 
 
 The file results.csv should contains 4 columns::
