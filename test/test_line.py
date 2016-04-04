@@ -13,7 +13,7 @@ def test_regression_line():
     line.diagnostic()
 
     peaks = line.get_peaks()
-    assert peaks == [168.0, 584.0, 164.0, 1261.0, 168.0, 172.0, 608.0, 164.0, 575.0, 583.0, 609.0]
+    assert peaks == [168.0, 584.0, 164.0, 1261.0, 168.0, 172.0, 608.0, 164.0,575.0, 583.0, 609.0, None]
 
     assert line.guess_peak() == 575
     line.set_guess()  # --> guessing
@@ -35,16 +35,29 @@ def test_alternate():
 
     l = Line(fa_data('alternate/peaktable.csv'), lower_bound=1)
     assert l.get_peaks()[0:3] == [65.,65.,164.]
+    l.diagnostic()
 
     l = Line(fa_data('alternate/peaktable.csv'), sigma=50)
     l.set_guess(500)
     assert l.get_peaks()[0:3] == [608., 584., 445.]
+    l.diagnostic()
 
     l = Line(fa_data('alternate/peaktable.csv'), sigma=100)
     l.set_guess(500)
     assert l.get_peaks()[0:3] == [608,584,584]
+    l.diagnostic()
 
     l = Line(fa_data('alternate/peaktable.csv'), sigma=100)
     l.set_guess(1200)
     assert l.get_peaks()[0:3] == [608, 584, 1169]
+    l.diagnostic()
+
+
+def _test_gap():
+
+    l = Line(fa_data('standard_with_flat_cases/peaktable.csv'))
+    l.diagnostic()
+
+
+
 

@@ -69,18 +69,11 @@ class Plate(object):
                     data.append(well.df.ix[index])
                 else:
                     # If no peak detected, create a line with well name and ID
+                    # but no data
                     df = well.df.copy()
                     N = len(df.columns)
                     df.ix[0] = [well.name, well.well_ID] + [None] * 11
                     data.append(df.ix[0])
-
-            """if line.control is not None:
-                ts = line.control.df.iloc[0].copy()
-                for this in ts.index:
-                    if this in ['Well', 'Sample ID']: pass
-                    else: ts.ix[this] = None
-                data.append(ts)
-            """
 
         df = pd.DataFrame(data)
         df.reset_index(inplace=True, drop=True)

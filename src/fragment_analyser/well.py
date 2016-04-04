@@ -66,26 +66,38 @@ class Well(object):
         columns[i2], columns[i1] = columns[i1], columns[i2]
         self.df = self.df.loc[:, columns]
 
-
         # is it a control ?
-        if self.well_ID.lower() in ['ladder', 'control', 'rien']:
-            mask = [False] * len(self.df)
-            self.df = self.df[mask]
-
+        if self.well_ID.lower() in ['ladder']:
+            data = [None] * len(self.df)
+            self.df["Size (bp)"] = data
 
     def get_peak_and_index(self):
         """Get the position of the peak with maximum height
+
+        This is a naive search for the maximum is the guess attribute is not
+        set. Otherwise, we first multiply the data by a gaussian centered
+        around the :attr:`guess` attribute and with a sigma defined in
+        :attr:`sigma`.
 
         :return: nothing if no peaks found in the valid range otherwise
             returns peak position (in bp) and the index within the dataframe
             :attr:`df`.
         """
         df = self.df.copy()
+
+        # If there is no rows, return nothing
         if len(df) == 0:
             return None
 
+        # We may have rows but with no detected peak because we tagged
+        # same (e.g. control/ladder well). So if no valid peaks to be detected,
+        # return nothing
         positions = df['Size (bp)'].astype(float)
+        positions.dropna(inplace=True)
+        if len(positions) == 0:
+            return
 
+        # the data to use
         data = df['RFU'].copy()
 
         # this need to be cast into float
@@ -128,11 +140,14 @@ class Well(object):
 
         """
         import pylab
-        x = self.df['Size (bp)'].astype(float).values
-        y = self.df['RFU'].astype(float).values
-        if len(x) == 0:
+        if len(self.df) == 0:
             print("Nothing to plot (no peaks)")
             return
+        x = self.df['Size (bp)'].astype(float).values
+        y = self.df['RFU'].astype(float).values
+
+
+
         pylab.stem(x, y, marker=marker, color=color)
         pylab.semilogx()
         pylab.xlim([1, M])
