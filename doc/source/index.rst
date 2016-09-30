@@ -96,6 +96,18 @@ stored only peaks that were detected at the same/expected position.
 The notebooks in ./notebooks directory and the links in the reference section
 (here below) give some examples. 
 
+Changes
+=========
+
+Version 0.9.10
+----------------
+
+The format given by the machine has changed. The old version contained a column
+with a redundant unit. We had a hack in place. Now, the machine returns the
+correct format. So the hack us redundant. To be back compatible with previous
+file formats, we keep the hack but do not use it with newly formatted files.
+
+
 
 
 

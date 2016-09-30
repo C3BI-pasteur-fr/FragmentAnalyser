@@ -46,7 +46,7 @@ class PeakTableReader(object):
         .
         .
 
-    The standard format looks like::
+    The standard format looks like (until sept 2016) ::
 
         Well,Sample ID,Peak ID,Size (bp),% (Conc.),nmole/L,ng/ul,RFU,Avg. Size,TIC (ng/ul),TIM (nmole/L),Total Conc. (ng/ul)
         B1,203,1,1,,165.013,0.1263,1562,2,46.2333,65.343 nmole/L,46.2689
@@ -56,6 +56,9 @@ class PeakTableReader(object):
         B2,200,2,498,100.0,80.962,24.4814,359,706,24.4814,80.962 nmole/L,24.6155
         B2,200,3,6000,,0.037,0.1359,1613,6012,24.4814,80.962 nmole/L,24.6155
         B3,199,1,1,,165.013,0.1263,1365,5,47.9139,57.906 nmole/L,47.9479
+
+    .. note:: a new version after sept 2016 has no more "nmole/L" included in the row. 
+        we handle both cases.
 
     Here, the wells are named B1, B2, B3 ... Other lines may be named A1, A2, ...
     Each file contains the data for a single line and uses a single letter from A to H corresponding
@@ -154,9 +157,15 @@ class PeakTableReader(object):
         for i, well_name in enumerate(self.names):
             data = self.df.ix[self.df.groupby("Well").groups[well_name]]
             # column TIM contains the unit, redundant with header. Besides,
-            # cannot be used as float:
-            data['TIM (nmole/L)'] = data['TIM (nmole/L)'].apply(lambda x:
+            # cannot be used as float. This was a bug in the integrated software
+            # included in the fragment analyser machine. Was fixed at biomics in
+            # sept2016 but it means other machine and older files may use the
+            # other format. so, we handle the two cases:
+            try: 
+                data['TIM (nmole/L)'] = data['TIM (nmole/L)'].apply(lambda x:
                                                                 x.split(" ")[0])
+            except:
+                print("The TIM column is correct")
 
             # convert all data to the correct type:
             for colname in data.columns:

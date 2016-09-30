@@ -146,8 +146,6 @@ class Well(object):
         x = self.df['Size (bp)'].astype(float).values
         y = self.df['RFU'].astype(float).values
 
-
-
         pylab.stem(x, y, marker=marker, color=color)
         pylab.semilogx()
         pylab.xlim([1, M])
