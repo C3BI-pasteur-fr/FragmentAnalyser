@@ -85,7 +85,10 @@ setup(
     # so '' :['README.rst'] will include all README.rst recursively
     package_data = {
         'fragment_analyser.data' : ['*.txt', '*.csv', '*.tsv', '*.gz', 'README.rst'],
+        'fragment_analyser.data.alternate' : ['*.csv'],
         'fragment_analyser.data.examples' : ['*.csv'],
+        'fragment_analyser.data.standard_mix_cases' : ['*.csv'],
+        'fragment_analyser.data.standard_with_flat_cases' : ['*.csv'],
         '' : ['README.rst'],
         },
 
