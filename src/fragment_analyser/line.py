@@ -5,8 +5,6 @@ import numpy as np
 from .tools import nonemedian
 
 # Used to avoid issue with missing DISPLAY on the cluster.
-import matplotlib
-matplotlib.use('Agg')
 import pylab
 
 from .peaktable import PeakTableReader

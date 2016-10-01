@@ -11,8 +11,6 @@ from .plate import Plate
 
 
 # Used to avoid issue with missing DISPLAY on the cluster.
-import matplotlib
-matplotlib.use('Agg')
 import pylab
 
 t3 = time.time()

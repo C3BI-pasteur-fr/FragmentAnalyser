@@ -81,12 +81,11 @@ setup(
     zip_safe=False,
     include_package_data = True,
 
-
     # here below '': pattern means include that pattern in all packages
     # so '' :['README.rst'] will include all README.rst recursively
     package_data = {
-        'share.data' : ['*.txt', '*.csv', '*.tsv', '*.gz', 'README.rst'],
-        'share.data.examples' : ['*.csv'],
+        'fragment_analyser.data' : ['*.txt', '*.csv', '*.tsv', '*.gz', 'README.rst'],
+        'fragment_analyser.data.examples' : ['*.csv'],
         '' : ['README.rst'],
         },
 
@@ -97,8 +96,4 @@ setup(
         'console_scripts': [
         'fragment_analyser=fragment_analyser.pipelines:main',]
         },
-
-
     )
-
-

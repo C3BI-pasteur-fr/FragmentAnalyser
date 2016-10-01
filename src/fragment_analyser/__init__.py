@@ -9,6 +9,11 @@ from .peaktable import PeakTableReader
 import pkg_resources
 import easydev
 
+# Avoid display issue on the IP cluster
+import matplotlib
+matplotlib.use('Agg')
+
+
 try:
     version = pkg_resources.require("fragment_analyser")[0].version
     __version__ = version
@@ -18,23 +23,14 @@ except:
     version = "?"
 
 
-# TODO a get data file ?
-
-def fa_data(filename):
-    """Retrieve data set pathname from fragment_analyser/share directory
-
-    ::
-
-        >>> fa_data("standard_mix_cases/peak_table.csv")
-        /home/user/path_to_fa/share/data/standard_mix_cases/peak_table.csv'
-
-    """
+def fa_data(filename=None, where=None):
+    """retrieve data set path from fragment_analyser/data dir"""
     import os
     import easydev
-    share = easydev.get_shared_directory_path('fragment_analyser')
-    share = os.sep.join([share, 'data'])
-    # in the code one may use / or \
-    filename = os.sep.join([share, filename])
+    import glob
+    fa_path = easydev.get_package_location('fragment_analyser')
+    sharedir = os.sep.join([fa_path , "fragment_analyser", 'data'])
+    filename = sharedir + os.sep + filename
     if os.path.exists(filename) is False:
         raise Exception('unknown file %s' % filename)
     return filename

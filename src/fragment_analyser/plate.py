@@ -5,10 +5,6 @@ from .line import Line
 import numpy as np
 import pandas as pd
 
-# Used to avoid issue with missing DISPLAY on the cluster.
-import matplotlib
-matplotlib.use('Agg')
-
 
 class Plate(object):
     """Reads several files (lines) and save a summary file
