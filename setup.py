@@ -5,13 +5,11 @@ import os
 from setuptools import setup, find_packages
 import glob
 
-
 _MAJOR               = 0
 _MINOR               = 9
 _MICRO               = 10
 version              = '%d.%d.%d' % (_MAJOR, _MINOR, _MICRO)
 release              = '%d.%d' % (_MAJOR, _MINOR)
-
 
 metainfo = {
     'authors': {
@@ -47,7 +45,7 @@ from distutils.core import setup, Extension
 
 
 on_rtd = os.environ.get('READTHEDOCS', None) == 'True'
-#
+
 
 # on rtd, pandas is 1.3.1 cannot use something better for now
 if on_rtd is True:  # only import and set the theme if we're building docs
@@ -73,13 +71,10 @@ setup(
     classifiers      = metainfo['classifiers'],
 
     # package installation
-    package_dir = {
-        'share.data': 'share/data',
-        '':'src'},
     packages = ['fragment_analyser'],
+    # find_packages("src"),
 
     zip_safe=False,
-    include_package_data = True,
 
     # here below '': pattern means include that pattern in all packages
     # so '' :['README.rst'] will include all README.rst recursively
