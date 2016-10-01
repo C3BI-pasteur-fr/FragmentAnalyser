@@ -53,6 +53,8 @@ if on_rtd is True:  # only import and set the theme if we're building docs
 else:
     install_requires = ['numpy', 'matplotlib>=1.4.3', 'pandas>=0.16.2', 'easydev>=0.9.5', ],
 
+packages = find_packages(exclude=("", "test"))
+
 
 setup(
     name             = 'fragment_analyser',
@@ -71,13 +73,13 @@ setup(
     classifiers      = metainfo['classifiers'],
 
     # package installation
-    packages = ['fragment_analyser'],
-    # find_packages("src"),
+    packages = packages,
 
     zip_safe=False,
 
     # here below '': pattern means include that pattern in all packages
     # so '' :['README.rst'] will include all README.rst recursively
+    exclude_package_data = {"": ["__pycache__"]},
     package_data = {
         'fragment_analyser.data' : ['*.txt', '*.csv', '*.tsv', '*.gz', 'README.rst'],
         'fragment_analyser.data.alternate' : ['*.csv'],
