@@ -165,7 +165,7 @@ class PeakTableReader(object):
                 data['TIM (nmole/L)'] = data['TIM (nmole/L)'].apply(lambda x:
                                                                 x.split(" ")[0])
             except:
-                print("The TIM column is correct")
+                pass
 
             # convert all data to the correct type:
             for colname in data.columns:
