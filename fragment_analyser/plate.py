@@ -68,7 +68,7 @@ class Plate(object):
                     # but no data
                     df = well.df.copy()
                     N = len(df.columns)
-                    df.ix[0] = [well.name, well.well_ID] + [None] * 11
+                    df.ix[0] = [well.name, well.well_ID] + [None] * (N-2)
                     data.append(df.ix[0])
 
         df = pd.DataFrame(data)

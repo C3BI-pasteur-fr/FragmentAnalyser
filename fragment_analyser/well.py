@@ -60,11 +60,12 @@ class Well(object):
         # we re-arrange some data for the user convenience
         # swap those two columns: u'RFU', u'Avg. Size' to have the order:
         # ng/ul - Avg Size and RFU
-        columns = list(self.df.columns)
-        i1 = columns.index('RFU')
-        i2 = columns.index('Avg. Size')
-        columns[i2], columns[i1] = columns[i1], columns[i2]
-        self.df = self.df.loc[:, columns]
+        if "Avg. Size" in self.df.columns: # does not exists in OCt 2016 format
+            columns = list(self.df.columns)
+            i1 = columns.index('RFU')
+            i2 = columns.index('Avg. Size')
+            columns[i2], columns[i1] = columns[i1], columns[i2]
+            self.df = self.df.loc[:, columns]
 
         # is it a control ?
         if self.well_ID.lower() in ['ladder']:
