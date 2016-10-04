@@ -73,7 +73,10 @@ class Plate(object):
 
         df = pd.DataFrame(data)
         df.reset_index(inplace=True, drop=True)
-        df.drop('Peak ID', axis=1, inplace=True)
+
+        # new format has no Peak ID
+        if "Peak ID" in df.columns:
+            df.drop('Peak ID', axis=1, inplace=True)
         self.data = df
 
     def to_csv(self, filename="results.csv"):
