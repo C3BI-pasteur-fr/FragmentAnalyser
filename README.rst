@@ -19,7 +19,9 @@ in your environment as follows::
 
     module load fragment_analyser
 
-.. note:: behind the scene, it changes your Python environment to use Python 3.4
+Issue with the creation of images::
+
+    echo "backend:agg" >> ~/.config/matplotlib/matplotlibrc
 
 Analyse some files
 ~~~~~~~~~~~~~~~~~~~~
