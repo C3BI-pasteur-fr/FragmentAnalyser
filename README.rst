@@ -9,7 +9,7 @@ Load the module
 
 **To do only once**: On central-bio, open a unix shell and if not already done, edit the file .profile (in your home directory) and add this line::
 
-    module use /pasteur/projets/Matrix/modules
+    module use /pasteur/projets/policy01/Matrix/modules
 
 quit the shell (or source the .profile file).
 
