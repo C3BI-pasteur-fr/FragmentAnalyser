@@ -98,6 +98,15 @@ The notebooks in ./notebooks directory and the links in the reference section
 
 Changes
 =========
+Version 0.9.11
+----------------
+
+Some plates are not homogenous: the peak position is different in each line. In
+such cases, the previous algorithm does not work since it was taking the
+consensus position as a reference for further analysis. We have now the ability
+to also analyse heterogenous plate where each peak position (in a given line) is
+independent of the next line. Using the --method heterogenous argument is
+implemented in the executable
 
 Version 0.9.10
 ----------------

@@ -70,6 +70,12 @@ sigma of 50 by default, which can be changed with this parameter.""")
         group.add_argument("-g", "--guess", default=None, type=float,
                            help="""Position of the peak to be identified. If not
 provided, guessed from the median of the maximum across the line.""")
+        group.add_argument("-m", "--method", default="homogeneous", type=str,
+                            choices=["homogeneous", "heterogeous", "max", "conc"],
+                           help="""By default plates are homogeneous that is all
+main peaks are suppose to be found around the same position; In such case, the
+peak position is guessed from the consensus across the different lines; peaks 
+are then identified according to that consensus. If the plate is heterogeous, then the concentration is used to identify the peak position, independently in each line.""")
 
 
 
@@ -108,14 +114,17 @@ def main(args=None):
         print('- %s' % filename)
     output_filename = options.output
 
-
+    if options.method in ["homogeneous", "max"]:
+        peak_mode = "max"
+    elif options.method in ["heterogeous", "conc", "concentration"]:
+        peak_mode = "concentration"
 
     # Save the CSV summary files setting the precision
-
     plate = Plate(filenames, guess=options.guess,
                   sigma=options.sigma,
                   lower_bound=options.lower_bound,
-                  upper_bound=options.upper_bound)
+                  upper_bound=options.upper_bound, 
+                    peak_mode=peak_mode)
     plate.analyse() # by default keep all data
 
     # apply precision on numeric data
@@ -131,7 +140,8 @@ def main(args=None):
         plate.to_csv(output_filename.replace(".csv", "_all.csv"))
 
     # we may also consider that lines are uniform so outliers must be crossed
-    plate.filterout()
+    if options.method in ["homogeneous", "max"]:
+        plate.filterout()
 
     if options.tag is not None:
         plate.to_csv(output_filename.replace(".csv",

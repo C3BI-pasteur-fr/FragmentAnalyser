@@ -75,7 +75,7 @@ class Well(object):
     def get_peak_and_index(self):
         """Get the position of the peak with maximum height
 
-        This is a naive search for the maximum is the guess attribute is not
+        This is a naive search for the maximum when a guess is not
         set. Otherwise, we first multiply the data by a gaussian centered
         around the :attr:`guess` attribute and with a sigma defined in
         :attr:`sigma`.
@@ -126,6 +126,16 @@ class Well(object):
             maximum, index = self.get_peak_and_index()
             return maximum
         except:
+            return None
+
+    def get_most_concentrated_peak(self):
+        concs = self.df['% (Conc.)']
+        if len(concs):
+            index = concs.argmax()
+            maximum = concs.max()
+            maximum = self.df.ix[index]['Size (bp)']
+            return maximum, index
+        else:
             return None
 
     def plot(self, marker='o', color='red', m=0, M=6000):

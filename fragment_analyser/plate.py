@@ -14,15 +14,15 @@ class Plate(object):
 
     """
     def __init__(self, filenames, guess=None, lower_bound=120,
-                 upper_bound=6000,  sigma=50):
+                 upper_bound=6000,  sigma=50, peak_mode="max"):
         self.filenames = filenames
         self.guess = guess
         self.sigma = sigma
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.minmad = 25
-
         self.mw_dna = 650
+        self.peak_mode = peak_mode
         self._get_lines()
 
     def __str__(self):
@@ -42,10 +42,12 @@ class Plate(object):
             try:
                 line = Line(filename, sigma=self.sigma,
                             lower_bound=self.lower_bound,
-                            upper_bound=self.upper_bound)
+                            upper_bound=self.upper_bound,
+                            peak_mode=self.peak_mode)
 
                 # THIS LINE IS IMPORTANT TO WEIGHT DOWN OUTLIERS
-                line.set_guess(self.guess)
+                if self.peak_mode == "max":
+                    line.set_guess(self.guess)
                 self.lines.append(line)
             except Exception as err:
                 print(err)
@@ -59,7 +61,10 @@ class Plate(object):
         data = []
         for line in self.lines:
             for well in line.wells:
-                res = well.get_peak_and_index()
+                if self.peak_mode == "max":
+                    res = well.get_peak_and_index()
+                else:
+                    res = well.get_most_concentrated_peak()
                 if res:
                     peak, index = res
                     data.append(well.df.ix[index])

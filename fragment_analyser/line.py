@@ -13,12 +13,22 @@ from .peaktable import PeakTableReader
 class Line(object):
     """Class dedicated to a Line
 
+
     A line has 12 :class:`~fragment_analyser.well.Well`.
 
     Used by :class:`~fragment_analyser.plate.Plate`
     """
     def __init__(self, filename, sigma=50, lower_bound=120, upper_bound=6000,
-                 control="Ladder"):
+                 control="Ladder", peak_mode="max"):
+        """.. rubric:: constructor
+
+        :param  peak_mode: if set to max, the peak is found based on the max
+            height and the guessed peak based on median maximum across all wells. 
+            if set to "concentration", the column "(% Conc)" is used to find the
+            peak based on the max concentration irrespetive of other wells.
+
+
+        """
 
         self.number = None
 
@@ -26,6 +36,7 @@ class Line(object):
                               upper_bound=upper_bound)
         self._nwells = ptr._nwells
         self.wells = ptr.wells
+        self.peak_mode = peak_mode
 
     def guess_peak(self):
         """guess peak position
@@ -49,7 +60,12 @@ class Line(object):
 
     def get_peaks(self):
         """Return list of max peaks in the N wells"""
-        peaks = [well.get_peak() for well in self.wells]
+        if self.peak_mode == "max":
+            peaks = [well.get_peak() for well in self.wells]
+        else:
+            peaks = [well.get_most_concentrated_peak() for well in self.wells]
+            # we want the maximum; some peak are set to None 
+            peaks = [x[0] if x else x for x in peaks]
         return peaks
 
     def get_well_names(self):
@@ -85,7 +101,7 @@ class Line(object):
             l.diagnostic()
 
         """
-        peaks = [well.get_peak() for well in self.wells]
+        peaks = self.get_peaks()
         names = [well.name for well in self.wells]
 
         pylab.clf()
