@@ -1,8 +1,8 @@
 FragmentAnalyser utilities
 ===========================
 
-Usage on BIC on central-bio
------------------------------
+Usage on BIC/TARS or central-bio
+----------------------------------
 
 Load the module
 ~~~~~~~~~~~~~~~~
