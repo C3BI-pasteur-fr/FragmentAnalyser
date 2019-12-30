@@ -105,7 +105,7 @@ class Well(object):
         data = data.astype(float)
 
         naive_max = data.max()
-        index = data.argmax()
+        index = data.idxmax()
 
         if self.guess is None:
             pass
@@ -114,7 +114,7 @@ class Well(object):
             weighted_data = pylab.exp(-0.5*( (self.guess - positions.values) /
                 self.sigma)**2)
             data = data * weighted_data
-            index = data.argmax()
+            index = data.idxmax()
 
         peak_pos = float(df['Size (bp)'].ix[index])
         return peak_pos, index
@@ -131,7 +131,7 @@ class Well(object):
     def get_most_concentrated_peak(self):
         concs = self.df['% (Conc.)']
         if len(concs):
-            index = concs.argmax()
+            index = concs.idxmax()
             maximum = concs.max()
             maximum = self.df.ix[index]['Size (bp)']
             return maximum, index
